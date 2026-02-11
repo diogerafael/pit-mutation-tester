@@ -173,6 +173,60 @@ public class MutationCommandLineState extends JavaCommandLineState {
         if (StringUtils.isNotEmpty(jUnit5JupiterJar)) {
             pathsList.add(jUnit5JupiterJar);
         }
+        
+        // JUnit Jupiter Engine (TestEngine implementation)
+        final String junitJupiterEngine = dependencyService.getArtifact(options.getRepoUrl(), String.format("org/junit/jupiter/junit-jupiter-engine/%1$s/junit-jupiter-engine-%1$s.jar", options.getJunitJupiterVersion()));
+        if (StringUtils.isNotEmpty(junitJupiterEngine)) {
+            pathsList.add(junitJupiterEngine);
+        }
+        
+        // JUnit Jupiter API
+        final String junitJupiterApi = dependencyService.getArtifact(options.getRepoUrl(), String.format("org/junit/jupiter/junit-jupiter-api/%1$s/junit-jupiter-api-%1$s.jar", options.getJunitJupiterVersion()));
+        if (StringUtils.isNotEmpty(junitJupiterApi)) {
+            pathsList.add(junitJupiterApi);
+        }
+        
+        // OpenTest4J (required by JUnit Jupiter)
+        final String opentest4jVersion = "1.2.0"; // Compatible with JUnit 5.9.x
+        final String opentest4j = dependencyService.getArtifact(options.getRepoUrl(), String.format("org/opentest4j/opentest4j/%1$s/opentest4j-%1$s.jar", opentest4jVersion));
+        if (StringUtils.isNotEmpty(opentest4j)) {
+            pathsList.add(opentest4j);
+        }
+        
+        // JUnit Platform dependencies required by JUnit 5
+        final String junitPlatformVersion = determinePlatformVersion(options.getJunitJupiterVersion());
+        final String junitPlatformCommons = dependencyService.getArtifact(options.getRepoUrl(), String.format("org/junit/platform/junit-platform-commons/%1$s/junit-platform-commons-%1$s.jar", junitPlatformVersion));
+        if (StringUtils.isNotEmpty(junitPlatformCommons)) {
+            pathsList.add(junitPlatformCommons);
+        }
+        final String junitPlatformEngine = dependencyService.getArtifact(options.getRepoUrl(), String.format("org/junit/platform/junit-platform-engine/%1$s/junit-platform-engine-%1$s.jar", junitPlatformVersion));
+        if (StringUtils.isNotEmpty(junitPlatformEngine)) {
+            pathsList.add(junitPlatformEngine);
+        }
+        final String junitPlatformLauncher = dependencyService.getArtifact(options.getRepoUrl(), String.format("org/junit/platform/junit-platform-launcher/%1$s/junit-platform-launcher-%1$s.jar", junitPlatformVersion));
+        if (StringUtils.isNotEmpty(junitPlatformLauncher)) {
+            pathsList.add(junitPlatformLauncher);
+        }
+    }
+    
+    /**
+     * Determines the JUnit Platform version based on JUnit Jupiter version
+     * JUnit Jupiter 5.9.x uses Platform 1.9.x
+     * JUnit Jupiter 5.10.x uses Platform 1.10.x
+     * 
+     * @param jupiterVersion JUnit Jupiter version
+     * @return corresponding JUnit Platform version
+     */
+    private String determinePlatformVersion(String jupiterVersion) {
+        if (jupiterVersion == null || jupiterVersion.isEmpty()) {
+            return "1.9.3";
+        }
+        // Extract major.minor from Jupiter version (e.g., "5.9.3" -> "1.9.3")
+        String[] parts = jupiterVersion.split("\\.");
+        if (parts.length >= 2) {
+            return "1." + parts[1] + (parts.length > 2 ? "." + parts[2] : ".0");
+        }
+        return "1.9.3";
     }
 
 

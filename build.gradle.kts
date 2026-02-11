@@ -24,8 +24,9 @@ plugins {
 }
 
 group = "com.valantic"
-version = "2.0.0"
-java.sourceCompatibility = JavaVersion.VERSION_1_8
+version = "2.2.5"
+java.sourceCompatibility = JavaVersion.VERSION_17
+java.targetCompatibility = JavaVersion.VERSION_17
 
 repositories {
     mavenCentral()
@@ -36,11 +37,10 @@ repositories {
 
 intellijPlatform {
     pluginConfiguration.ideaVersion.sinceBuild = "212.4746.92"
+    pluginConfiguration.ideaVersion.untilBuild = provider {null}
     pluginConfiguration.version = project.version.toString()
     buildSearchableOptions = false
-    instrumentCode = true
     projectName = project.name
-    intellijPlatform.pluginConfiguration.ideaVersion
 
     publishing {
         token = System.getenv("ORG_GRADLE_PROJECT_intellijPublishToken")
@@ -97,9 +97,9 @@ dependencies {
         zipSigner()
     }
 
-    testImplementation("org.pitest:pitest:1.17.4")
-    testImplementation("org.pitest:pitest-entry:1.17.4")
-    testImplementation("org.pitest:pitest-command-line:1.17.4")
+    testImplementation("org.pitest:pitest:1.18.0")
+    testImplementation("org.pitest:pitest-entry:1.18.0")
+    testImplementation("org.pitest:pitest-command-line:1.18.0")
     testImplementation("org.pitest:pitest-junit5-plugin:1.2.1")
     testImplementation("org.junit.jupiter:junit-jupiter:5.11.4")
     testImplementation("org.mockito:mockito-junit-jupiter:5.3.1")
